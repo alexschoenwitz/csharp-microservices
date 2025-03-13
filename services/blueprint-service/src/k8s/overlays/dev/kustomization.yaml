@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+namespace: dev
+
+commonLabels:
+  environment: dev
+
+patchesStrategicMerge:
+  - deployment-patch.yaml
+
+configMapGenerator:
+  - name: blueprint-service-config
+    behavior: merge
+    literals:
+      - Blueprint__ServiceName=BlueprintService-Dev
+      - Database__MaxPoolSize=50

@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package blueprintservice;
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "BlueprintService.BlueprintProto";
+
+// Blueprint metadata definition
+message BlueprintMetadata {
+  string owner = 1;
+  string version = 2;
+  repeated string tags = 3;
+}
+
+// Main blueprint representation 
+message Blueprint {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  BlueprintMetadata metadata = 6;
+}
+
+// Request/Response messages for service operations
+
+// Get a specific blueprint
+message GetBlueprintRequest {
+  string id = 1;
+}
+
+message GetBlueprintResponse {
+  Blueprint blueprint = 1;
+}
+
+// List blueprints with pagination
+message ListBlueprintsRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+}
+
+message ListBlueprintsResponse {
+  repeated Blueprint blueprints = 1;
+}
+
+// Create a new blueprint
+message CreateBlueprintRequest {
+  string name = 1;
+  string description = 2;
+  BlueprintMetadata metadata = 3;
+}
+
+message CreateBlueprintResponse {
+  Blueprint blueprint = 1;
+}
+
+// Update an existing blueprint
+message UpdateBlueprintRequest {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  BlueprintMetadata metadata = 4;
+}
+
+message UpdateBlueprintResponse {
+  Blueprint blueprint = 1;
+}
+
+// Delete a blueprint
+message DeleteBlueprintRequest {
+  string id = 1;
+}
+
+message DeleteBlueprintResponse {
+  // Empty response - success is determined by non-error response
+}
+
+// Service definition
+service BlueprintService {
+  rpc GetBlueprint (GetBlueprintRequest) returns (GetBlueprintResponse);
+  rpc ListBlueprints (ListBlueprintsRequest) returns (ListBlueprintsResponse);
+  rpc CreateBlueprint (CreateBlueprintRequest) returns (CreateBlueprintResponse);
+  rpc UpdateBlueprint (UpdateBlueprintRequest) returns (UpdateBlueprintResponse);
+  rpc DeleteBlueprint (DeleteBlueprintRequest) returns (DeleteBlueprintResponse);
+}
