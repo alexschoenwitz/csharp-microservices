@@ -2,6 +2,7 @@
 
 # Variables
 PROJECT_NAME = BlueprintService
+PROJECT_FILE = $(PROJECT_NAME).csproj
 DOCKER_IMAGE = blueprint-service
 TAG = latest
 DEV_TAG = dev
@@ -14,7 +15,7 @@ PROTO_TOOLS_VERSION = 3.21.12
 K8S_BASE_DIR = k8s/base
 K8S_DEV_DIR = k8s/overlays/dev
 
-.PHONY: help build run test clean docker-build docker-run proto k8s-apply-dev k8s-delete-dev db-setup db-reset
+.PHONY: help build run test clean format lint docker-build docker-run proto k8s-apply-dev k8s-delete-dev db-setup db-reset
 
 # Default target
 help:
@@ -25,6 +26,8 @@ help:
 	@echo "  make run             - Run the service locally"
 	@echo "  make test            - Run tests"
 	@echo "  make clean           - Clean build artifacts"
+	@echo "  make format          - Format the code"
+	@echo "  make lint            - Lint the code (check format and build warnings)"
 	@echo "  make proto           - Generate code from proto files"
 	@echo "  make docker-build    - Build Docker image"
 	@echo "  make docker-run      - Run service in Docker"
@@ -37,12 +40,12 @@ help:
 # Build the service
 build:
 	@echo "Building $(PROJECT_NAME)..."
-	$(DOTNET) build $(PROJECT_NAME).csproj -c Release
+	$(DOTNET) build $(PROJECT_FILE) -c Release
 
 # Run the service locally
 run:
 	@echo "Running $(PROJECT_NAME)..."
-	$(DOTNET) run --project $(PROJECT_NAME).csproj
+	$(DOTNET) run --project $(PROJECT_FILE)
 
 # Run tests
 test:
@@ -52,8 +55,21 @@ test:
 # Clean build artifacts
 clean:
 	@echo "Cleaning build artifacts..."
-	$(DOTNET) clean
+	$(DOTNET) clean $(PROJECT_FILE)
 	rm -rf bin obj
+
+# Format the code
+format:
+	@echo "Formatting $(PROJECT_NAME)..."
+	$(DOTNET) format $(PROJECT_FILE) --include-generated
+
+# Lint the code (check formatting and build warnings)
+lint:
+	@echo "Linting $(PROJECT_NAME)..."
+	@echo "Checking formatting..."
+	$(DOTNET) format $(PROJECT_FILE) --verify-no-changes --include-generated --verbosity diagnostic
+	@echo "Checking for build warnings/errors..."
+	$(DOTNET) build $(PROJECT_FILE) /warnaserror
 
 # Generate code from proto files
 proto:
@@ -106,3 +122,4 @@ db-reset:
 	@echo "DROP DATABASE IF EXISTS blueprints;" | psql -h localhost -U postgres -p 5432 postgres
 	@echo "CREATE DATABASE blueprints;" | psql -h localhost -U postgres -p 5432 postgres
 	@cat db/schema.sql | psql -h localhost -U postgres -p 5432 blueprints
+

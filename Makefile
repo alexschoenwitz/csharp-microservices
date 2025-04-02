@@ -3,7 +3,7 @@ SOLUTION_FILE := BlueprintMonorepo.sln
 PROJECT_DIRS := services
 
 # Phony targets (targets that don't represent files)
-.PHONY: all update-sln build clean
+.PHONY: all update-sln build clean format lint
 
 # Default target
 all: build
@@ -25,4 +25,17 @@ build:
 clean:
 	@echo "Cleaning solution: $(SOLUTION_FILE)..."
 	dotnet clean $(SOLUTION_FILE)
+
+# Format the code in the solution
+format:
+	@echo "Formatting solution: $(SOLUTION_FILE)..."
+	dotnet format $(SOLUTION_FILE) --include-generated
+
+# Lint the code in the solution (check formatting and build warnings)
+lint:
+	@echo "Linting solution: $(SOLUTION_FILE)..."
+	@echo "Checking formatting..."
+	dotnet format $(SOLUTION_FILE) --verify-no-changes --include-generated --verbosity diagnostic
+	@echo "Checking for build warnings/errors..."
+	dotnet build $(SOLUTION_FILE) /warnaserror
 
