@@ -10,11 +10,11 @@ using BlueprintService.Telemetry;
 using BlueprintService.Validation;
 
 namespace BlueprintService
-{
-    public class Program
     {
-        public static void Main(string[] args)
+    public class Program
         {
+        public static void Main(string[] args)
+            {
             var builder = WebApplication.CreateBuilder(args);
             ConfigureServices(builder.Services, builder.Configuration);
 
@@ -22,10 +22,10 @@ namespace BlueprintService
             ConfigureApplication(app);
 
             app.Run();
-        }
+            }
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
-        {
+            {
             // Bind and validate configuration
             var blueprintConfig = new BlueprintConfiguration();
             configuration.GetSection("Blueprint").Bind(blueprintConfig);
@@ -54,15 +54,15 @@ namespace BlueprintService
 
             // Configure OpenTelemetry
             services.AddTelemetry(configuration);
-        }
+            }
 
         private static void ConfigureApplication(WebApplication app)
-        {
+            {
             // Configure middleware pipeline
             if (app.Environment.IsDevelopment())
-            {
+                {
                 app.UseDeveloperExceptionPage();
-            }
+                }
 
             // Configure routing and endpoints
             app.UseRouting();
@@ -72,6 +72,6 @@ namespace BlueprintService
 
             // Add global error handling middleware
             app.UseMiddleware<ErrorHandlingMiddleware>();
+            }
         }
     }
-}

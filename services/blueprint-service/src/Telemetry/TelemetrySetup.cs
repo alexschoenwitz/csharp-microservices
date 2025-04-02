@@ -7,16 +7,16 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 namespace BlueprintService.Telemetry
-{
-    public static class ActivitySource
     {
+    public static class ActivitySource
+        {
         public static readonly System.Diagnostics.ActivitySource Source = new("BlueprintService");
-    }
+        }
 
     public static class TelemetrySetup
-    {
-        public static IServiceCollection AddTelemetry(this IServiceCollection services, IConfiguration configuration)
         {
+        public static IServiceCollection AddTelemetry(this IServiceCollection services, IConfiguration configuration)
+            {
             var serviceName = configuration.GetValue<string>("Blueprint:ServiceName") ?? "BlueprintService";
 
             // Configure resource attributes with service information
@@ -42,12 +42,12 @@ namespace BlueprintService.Telemetry
                     // Conditionally add OTLP exporter if configured
                     var otlpEndpoint = configuration.GetValue<string>("Telemetry:OtlpEndpoint");
                     if (!string.IsNullOrEmpty(otlpEndpoint))
-                    {
+                        {
                         builder.AddOtlpExporter(options =>
                         {
                             options.Endpoint = new Uri(otlpEndpoint);
                         });
-                    }
+                        }
                 })
                 // Configure metrics
                 .WithMetrics(builder =>
@@ -60,15 +60,15 @@ namespace BlueprintService.Telemetry
                     // Conditionally add OTLP exporter if configured
                     var otlpEndpoint = configuration.GetValue<string>("Telemetry:OtlpEndpoint");
                     if (!string.IsNullOrEmpty(otlpEndpoint))
-                    {
+                        {
                         builder.AddOtlpExporter(options =>
                         {
                             options.Endpoint = new Uri(otlpEndpoint);
                         });
-                    }
+                        }
                 });
 
             return services;
+            }
         }
     }
-}
