@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using BlueprintService.Configuration;
 
 namespace BlueprintService.Validation
