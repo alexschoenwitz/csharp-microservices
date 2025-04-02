@@ -114,7 +114,6 @@ dotnet_diagnostic.IDE0074.severity = warning # Use coalesce compound assignment
 dotnet_diagnostic.IDE0090.severity = warning # Simplify 'new' expression (C# 9.0+)
 dotnet_diagnostic.IDE1006.severity = warning # Naming rule violation
 
-dotnet_diagnostic.CA1062.severity = warning # Validate arguments of public methods (can be noisy, adjust if needed)
 dotnet_diagnostic.CA1303.severity = none   # Do not pass literals as localized parameters (often too noisy for services)
 dotnet_diagnostic.CA1707.severity = warning # Identifiers should not contain underscores (adjust if conflicting with style)
 dotnet_diagnostic.CA1806.severity = warning # Do not ignore method results

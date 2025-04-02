@@ -24,7 +24,7 @@ namespace BlueprintService
             app.Run();
             }
 
-        private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+        private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
             {
             // Bind and validate configuration
             var blueprintConfig = new BlueprintConfiguration();

@@ -10,25 +10,13 @@ namespace BlueprintService.Validation
             {
             var errors = new List<string>();
 
-            if (string.IsNullOrEmpty(config.ServiceName))
-                {
-                errors.Add("ServiceName cannot be empty");
-                }
+            if (string.IsNullOrEmpty(config.ServiceName)) { errors.Add("ServiceName cannot be empty"); }
 
-            if (config.RetryAttempts < 0)
-                {
-                errors.Add($"RetryAttempts must be non-negative, but was {config.RetryAttempts}");
-                }
+            if (config.RetryAttempts < 0) { errors.Add($"RetryAttempts must be non-negative, but was {config.RetryAttempts}"); }
 
-            if (config.RequestTimeout <= TimeSpan.Zero)
-                {
-                errors.Add($"RequestTimeout must be positive, but was {config.RequestTimeout}");
-                }
+            if (config.RequestTimeout <= TimeSpan.Zero) { errors.Add($"RequestTimeout must be positive, but was {config.RequestTimeout}"); }
 
-            if (config.MaxConcurrentRequests <= 0)
-                {
-                errors.Add($"MaxConcurrentRequests must be positive, but was {config.MaxConcurrentRequests}");
-                }
+            if (config.MaxConcurrentRequests <= 0) { errors.Add($"MaxConcurrentRequests must be positive, but was {config.MaxConcurrentRequests}"); }
 
             if (errors.Count != 0)
                 {
