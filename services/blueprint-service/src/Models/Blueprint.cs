@@ -12,7 +12,7 @@ namespace BlueprintService.Models
         public DateTime UpdatedAt { get; init; }
         public string Metadata { get; init; } = string.Empty; // JSON column
     }
-    
+
     // Domain model
     public record Blueprint
     {
@@ -23,7 +23,7 @@ namespace BlueprintService.Models
         public DateTime UpdatedAt { get; init; }
         public BlueprintMetadata Metadata { get; init; } = new BlueprintMetadata();
     }
-    
+
     // Complex type stored as JSON
     public record BlueprintMetadata
     {
@@ -31,7 +31,7 @@ namespace BlueprintService.Models
         public string Version { get; init; } = "1.0.0";
         public string[] Tags { get; init; } = Array.Empty<string>();
     }
-    
+
     // Request/response models for the service API
     public record CreateBlueprintRequest
     {
@@ -39,7 +39,7 @@ namespace BlueprintService.Models
         public string Description { get; init; } = string.Empty;
         public BlueprintMetadata Metadata { get; init; } = new BlueprintMetadata();
     }
-    
+
     public record UpdateBlueprintRequest
     {
         public Guid Id { get; init; }
@@ -47,7 +47,7 @@ namespace BlueprintService.Models
         public string Description { get; init; } = string.Empty;
         public BlueprintMetadata Metadata { get; init; } = new BlueprintMetadata();
     }
-    
+
     public record BlueprintResponse
     {
         public Guid Id { get; init; }

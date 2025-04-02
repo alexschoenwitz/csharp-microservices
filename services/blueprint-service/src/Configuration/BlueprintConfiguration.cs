@@ -9,7 +9,7 @@ namespace BlueprintService.Configuration
         public TimeSpan RequestTimeout { get; init; } = TimeSpan.FromSeconds(30);
         public int MaxConcurrentRequests { get; init; } = 100;
     }
-    
+
     public record DatabaseConfiguration
     {
         public string ConnectionString { get; init; } = string.Empty;
