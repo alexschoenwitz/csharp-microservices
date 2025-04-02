@@ -9,12 +9,24 @@ PROJECT_DIRS := services
 all: build
 
 # Update the solution file with all projects found in PROJECT_DIRS
-# This finds all .csproj files and adds them to the solution.
-# dotnet sln add is generally idempotent (doesn't fail if project is already added).
+# This finds all .csproj files and adds only those not already in the solution.
 update-sln:
-	@echo "Updating solution file: $(SOLUTION_FILE)..."
-	@find $(PROJECT_DIRS) -name "*.csproj" -print0 | xargs -0 -I {} dotnet sln $(SOLUTION_FILE) add "{}"
-	@echo "Solution file updated."
+	@echo "Checking for new projects to add to solution file: $(SOLUTION_FILE)..."
+	@# Get projects currently in the solution, normalize paths, and sort
+	@CURRENT_PROJECTS=$$(dotnet sln $(SOLUTION_FILE) list | grep ".csproj" | sed 's|\\|/|g' | sort || true); \
+	# Find all potential projects, normalize paths, and sort
+	@ALL_PROJECTS=$$(find $(PROJECT_DIRS) -name "*.csproj" -print | sed 's|\\|/|g' | sort); \
+	# Find projects that are in ALL_PROJECTS but not in CURRENT_PROJECTS
+	@PROJECTS_TO_ADD=$$(comm -13 <(echo "$$CURRENT_PROJECTS") <(echo "$$ALL_PROJECTS")); \
+	# Add the missing projects, if any
+	@if [ -n "$$PROJECTS_TO_ADD" ]; then \
+		echo "Adding new projects to solution:"; \
+		echo "$$PROJECTS_TO_ADD" | sed 's/^/  /' ; \
+		echo "$$PROJECTS_TO_ADD" | xargs -I {} dotnet sln $(SOLUTION_FILE) add "{}" ; \
+		echo "Solution file updated."; \
+	else \
+		echo "No new projects found to add."; \
+	fi
 
 # Build the solution
 build:
