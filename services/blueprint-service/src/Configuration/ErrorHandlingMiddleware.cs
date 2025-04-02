@@ -6,14 +6,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace BlueprintService.Configuration
     {
-    public class ErrorHandlingMiddleware
+    public class ErrorHandlingMiddleware(RequestDelegate next)
         {
-        private readonly RequestDelegate _next;
-
-        public ErrorHandlingMiddleware(RequestDelegate next)
-            {
-            _next = next;
-            }
+        private readonly RequestDelegate _next = next;
 
         public async Task InvokeAsync(HttpContext context)
             {
@@ -30,7 +25,7 @@ namespace BlueprintService.Configuration
         private static async Task HandleExceptionAsync(HttpContext context, Exception exception)
             {
             var statusCode = HttpStatusCode.InternalServerError;
-            var message = "An unexpected error occurred.";
+            string message = "An unexpected error occurred.";
 
             // Customize response based on exception type
             switch (exception)

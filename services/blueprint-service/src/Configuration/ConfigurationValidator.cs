@@ -31,7 +31,7 @@ namespace BlueprintService.Validation
                 errors.Add($"MaxConcurrentRequests must be positive, but was {config.MaxConcurrentRequests}");
                 }
 
-            if (errors.Any())
+            if (errors.Count != 0)
                 {
                 throw new ArgumentException($"Invalid configuration: {string.Join(", ", errors)}");
                 }
@@ -61,7 +61,7 @@ namespace BlueprintService.Validation
                 errors.Add($"ConnectionIdleTimeout must be positive, but was {config.ConnectionIdleTimeout}");
                 }
 
-            if (errors.Any())
+            if (errors.Count != 0)
                 {
                 throw new ArgumentException($"Invalid database configuration: {string.Join(", ", errors)}");
                 }

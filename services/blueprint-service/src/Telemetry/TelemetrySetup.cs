@@ -17,7 +17,7 @@ namespace BlueprintService.Telemetry
         {
         public static IServiceCollection AddTelemetry(this IServiceCollection services, IConfiguration configuration)
             {
-            var serviceName = configuration.GetValue<string>("Blueprint:ServiceName") ?? "BlueprintService";
+            string serviceName = configuration.GetValue<string>("Blueprint:ServiceName") ?? "BlueprintService";
 
             // Configure resource attributes with service information
             var resourceBuilder = ResourceBuilder.CreateDefault()
@@ -40,13 +40,10 @@ namespace BlueprintService.Telemetry
                         .AddHttpClientInstrumentation();
 
                     // Conditionally add OTLP exporter if configured
-                    var otlpEndpoint = configuration.GetValue<string>("Telemetry:OtlpEndpoint");
+                    string? otlpEndpoint = configuration.GetValue<string>("Telemetry:OtlpEndpoint");
                     if (!string.IsNullOrEmpty(otlpEndpoint))
                         {
-                        builder.AddOtlpExporter(options =>
-                        {
-                            options.Endpoint = new Uri(otlpEndpoint);
-                        });
+                        builder.AddOtlpExporter(options => options.Endpoint = new Uri(otlpEndpoint));
                         }
                 })
                 // Configure metrics
@@ -58,13 +55,10 @@ namespace BlueprintService.Telemetry
                         .AddRuntimeInstrumentation();
 
                     // Conditionally add OTLP exporter if configured
-                    var otlpEndpoint = configuration.GetValue<string>("Telemetry:OtlpEndpoint");
+                    string? otlpEndpoint = configuration.GetValue<string>("Telemetry:OtlpEndpoint");
                     if (!string.IsNullOrEmpty(otlpEndpoint))
                         {
-                        builder.AddOtlpExporter(options =>
-                        {
-                            options.Endpoint = new Uri(otlpEndpoint);
-                        });
+                        builder.AddOtlpExporter(options => options.Endpoint = new Uri(otlpEndpoint));
                         }
                 });
 

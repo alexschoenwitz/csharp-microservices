@@ -6,27 +6,19 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace BlueprintService.Configuration
     {
-    public class DatabaseHealthCheck : IHealthCheck
+    public class DatabaseHealthCheck(IBlueprintRepository repository) : IHealthCheck
         {
-        private readonly IBlueprintRepository _repository;
-
-        public DatabaseHealthCheck(IBlueprintRepository repository)
-            {
-            _repository = repository;
-            }
+        private readonly IBlueprintRepository _repository = repository;
 
         public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
             {
             try
                 {
-                var isHealthy = await _repository.HealthCheckAsync(cancellationToken).ConfigureAwait(false);
+                bool isHealthy = await _repository.HealthCheckAsync(cancellationToken).ConfigureAwait(false);
 
-                if (isHealthy)
-                    {
-                    return HealthCheckResult.Healthy("Database connection is healthy");
-                    }
-
-                return HealthCheckResult.Degraded("Database health check failed");
+                return isHealthy
+                    ? HealthCheckResult.Healthy("Database connection is healthy")
+                    : HealthCheckResult.Degraded("Database health check failed");
                 }
             catch (Exception ex)
                 {
@@ -35,25 +27,17 @@ namespace BlueprintService.Configuration
             }
         }
 
-    public class ServiceHealthCheck : IHealthCheck
+    public class ServiceHealthCheck(BlueprintConfiguration config) : IHealthCheck
         {
-        private readonly BlueprintConfiguration _config;
-
-        public ServiceHealthCheck(BlueprintConfiguration config)
-            {
-            _config = config;
-            }
+        private readonly BlueprintConfiguration _config = config;
 
         public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
             {
             // Simple availability check
             // In a real-world scenario, we might check dependencies or other critical components
-            if (!string.IsNullOrEmpty(_config.ServiceName))
-                {
-                return Task.FromResult(HealthCheckResult.Healthy("Service is configured and running"));
-                }
-
-            return Task.FromResult(HealthCheckResult.Degraded("Service has configuration issues"));
+            return !string.IsNullOrEmpty(_config.ServiceName)
+                ? Task.FromResult(HealthCheckResult.Healthy("Service is configured and running"))
+                : Task.FromResult(HealthCheckResult.Degraded("Service has configuration issues"));
             }
         }
     }

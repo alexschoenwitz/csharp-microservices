@@ -29,7 +29,7 @@ namespace BlueprintService.Models
         {
         public string Owner { get; init; } = string.Empty;
         public string Version { get; init; } = "1.0.0";
-        public string[] Tags { get; init; } = Array.Empty<string>();
+        public string[] Tags { get; init; } = [];
         }
 
     // Request/response models for the service API

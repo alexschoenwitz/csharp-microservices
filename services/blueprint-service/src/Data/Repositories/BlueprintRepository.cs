@@ -24,14 +24,9 @@ namespace BlueprintService.Data.Repositories
         Task<bool> HealthCheckAsync(CancellationToken cancellationToken = default);
         }
 
-    public class BlueprintRepository : IBlueprintRepository
+    public class BlueprintRepository(DatabaseConfiguration config) : IBlueprintRepository
         {
-        private readonly DatabaseConfiguration _config;
-
-        public BlueprintRepository(DatabaseConfiguration config)
-            {
-            _config = config;
-            }
+        private readonly DatabaseConfiguration _config = config;
 
         private NpgsqlConnection CreateConnection()
             {
@@ -150,7 +145,7 @@ namespace BlueprintService.Data.Repositories
                 using var connection = CreateConnection();
                 await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-                var rowsAffected = await connection.ExecuteAsync(
+                int rowsAffected = await connection.ExecuteAsync(
                     BlueprintQueries.Delete,
                     new { Id = id },
                     commandTimeout: _config.CommandTimeout).ConfigureAwait(false);
@@ -191,7 +186,7 @@ namespace BlueprintService.Data.Repositories
                 using var connection = CreateConnection();
                 await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-                var result = await connection.ExecuteScalarAsync<int>(
+                int result = await connection.ExecuteScalarAsync<int>(
                     BlueprintQueries.HealthCheck,
                     commandTimeout: _config.CommandTimeout).ConfigureAwait(false);
 

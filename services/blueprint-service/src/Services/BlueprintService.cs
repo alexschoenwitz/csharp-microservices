@@ -18,14 +18,9 @@ namespace BlueprintService.Services
         Task<int> CountAsync(CancellationToken cancellationToken = default);
         }
 
-    public class BlueprintService : IBlueprintService
+    public class BlueprintService(IBlueprintRepository repository) : IBlueprintService
         {
-        private readonly IBlueprintRepository _repository;
-
-        public BlueprintService(IBlueprintRepository repository)
-            {
-            _repository = repository;
-            }
+        private readonly IBlueprintRepository _repository = repository;
 
         public async Task<BlueprintResponse?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
             {

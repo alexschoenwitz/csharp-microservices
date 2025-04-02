@@ -7,16 +7,10 @@ using Microsoft.Extensions.Logging;
 
 namespace BlueprintService.GrpcServices
     {
-    public class BlueprintGrpcService : BlueprintProto.BlueprintService.BlueprintServiceBase
+    public class BlueprintGrpcService(IBlueprintService blueprintService, ILogger<BlueprintGrpcService> logger) : BlueprintProto.BlueprintService.BlueprintServiceBase
         {
-        private readonly IBlueprintService _blueprintService;
-        private readonly ILogger<BlueprintGrpcService> _logger;
-
-        public BlueprintGrpcService(IBlueprintService blueprintService, ILogger<BlueprintGrpcService> logger)
-            {
-            _blueprintService = blueprintService;
-            _logger = logger;
-            }
+        private readonly IBlueprintService _blueprintService = blueprintService;
+        private readonly ILogger<BlueprintGrpcService> _logger = logger;
 
         public override async Task<BlueprintProto.GetBlueprintResponse> GetBlueprint(
             BlueprintProto.GetBlueprintRequest request, ServerCallContext context)
@@ -24,13 +18,7 @@ namespace BlueprintService.GrpcServices
             try
                 {
                 var id = Guid.Parse(request.Id);
-                var blueprint = await _blueprintService.GetByIdAsync(id, context.CancellationToken).ConfigureAwait(false);
-
-                if (blueprint == null)
-                    {
-                    throw new RpcException(new Status(StatusCode.NotFound, $"Blueprint with ID {request.Id} not found"));
-                    }
-
+                var blueprint = await _blueprintService.GetByIdAsync(id, context.CancellationToken).ConfigureAwait(false) ?? throw new RpcException(new Status(StatusCode.NotFound, $"Blueprint with ID {request.Id} not found"));
                 var response = new BlueprintProto.GetBlueprintResponse
                     {
                     Blueprint = new BlueprintProto.Blueprint
@@ -49,7 +37,7 @@ namespace BlueprintService.GrpcServices
                     };
 
                 // Add tags
-                foreach (var tag in blueprint.Metadata.Tags)
+                foreach (string tag in blueprint.Metadata.Tags)
                     {
                     response.Blueprint.Metadata.Tags.Add(tag);
                     }
@@ -100,7 +88,7 @@ namespace BlueprintService.GrpcServices
                         };
 
                     // Add tags
-                    foreach (var tag in blueprint.Metadata.Tags)
+                    foreach (string tag in blueprint.Metadata.Tags)
                         {
                         protoBlueprint.Metadata.Tags.Add(tag);
                         }
@@ -184,13 +172,7 @@ namespace BlueprintService.GrpcServices
                         }
                     };
 
-                var blueprint = await _blueprintService.UpdateAsync(updateRequest, context.CancellationToken).ConfigureAwait(false);
-
-                if (blueprint == null)
-                    {
-                    throw new RpcException(new Status(StatusCode.NotFound, $"Blueprint with ID {request.Id} not found"));
-                    }
-
+                var blueprint = await _blueprintService.UpdateAsync(updateRequest, context.CancellationToken).ConfigureAwait(false) ?? throw new RpcException(new Status(StatusCode.NotFound, $"Blueprint with ID {request.Id} not found"));
                 var response = new BlueprintProto.UpdateBlueprintResponse
                     {
                     Blueprint = new BlueprintProto.Blueprint
@@ -209,7 +191,7 @@ namespace BlueprintService.GrpcServices
                     };
 
                 // Add tags
-                foreach (var tag in blueprint.Metadata.Tags)
+                foreach (string tag in blueprint.Metadata.Tags)
                     {
                     response.Blueprint.Metadata.Tags.Add(tag);
                     }
@@ -241,14 +223,11 @@ namespace BlueprintService.GrpcServices
             try
                 {
                 var id = Guid.Parse(request.Id);
-                var success = await _blueprintService.DeleteAsync(id, context.CancellationToken).ConfigureAwait(false);
+                bool success = await _blueprintService.DeleteAsync(id, context.CancellationToken).ConfigureAwait(false);
 
-                if (!success)
-                    {
-                    throw new RpcException(new Status(StatusCode.NotFound, $"Blueprint with ID {request.Id} not found"));
-                    }
-
-                return new BlueprintProto.DeleteBlueprintResponse();
+                return !success
+                    ? throw new RpcException(new Status(StatusCode.NotFound, $"Blueprint with ID {request.Id} not found"))
+                    : new BlueprintProto.DeleteBlueprintResponse();
                 }
             catch (FormatException)
                 {
