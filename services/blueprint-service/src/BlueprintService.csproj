@@ -1,11 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>disable</ImplicitUsings>
-  </PropertyGroup>
-
   <!-- Protobuf Apple Silicon compatibility softwareupdate - -install-rosetta -->
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
     <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
@@ -14,7 +7,4 @@
   <ItemGroup>
     <Protobuf Include="proto/blueprint.proto" GrpcServices="Server" />
   </ItemGroup>
-
-  <!-- PackageReference items are now inherited from services/Directory.Build.props -->
-
 </Project>
