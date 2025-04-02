@@ -1,20 +1,20 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using BlueprintService.Configuration;
 using BlueprintService.Data.Repositories;
 using BlueprintService.Services;
 using BlueprintService.Telemetry;
 using BlueprintService.Validation;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace BlueprintService
-    {
+{
     public class Program
-        {
+    {
         public static void Main(string[] args)
-            {
+        {
             var builder = WebApplication.CreateBuilder(args);
             ConfigureServices(builder.Services, builder.Configuration);
 
@@ -22,10 +22,10 @@ namespace BlueprintService
             ConfigureApplication(app);
 
             app.Run();
-            }
+        }
 
         private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
-            {
+        {
             // Bind and validate configuration
             var blueprintConfig = new BlueprintConfiguration();
             configuration.GetSection("Blueprint").Bind(blueprintConfig);
@@ -54,15 +54,15 @@ namespace BlueprintService
 
             // Configure OpenTelemetry
             services.AddTelemetry(configuration);
-            }
+        }
 
         private static void ConfigureApplication(WebApplication app)
-            {
+        {
             // Configure middleware pipeline
             if (app.Environment.IsDevelopment())
-                {
+            {
                 app.UseDeveloperExceptionPage();
-                }
+            }
 
             // Configure routing and endpoints
             app.UseRouting();
@@ -72,6 +72,6 @@ namespace BlueprintService
 
             // Add global error handling middleware
             app.UseMiddleware<ErrorHandlingMiddleware>();
-            }
         }
     }
+}

@@ -1,7 +1,7 @@
 namespace BlueprintService.Data.Queries
-    {
+{
     public static class BlueprintQueries
-        {
+    {
         public const string CreateTable = @"
             CREATE TABLE IF NOT EXISTS blueprints (
                 id UUID PRIMARY KEY,
@@ -107,5 +107,5 @@ namespace BlueprintService.Data.Queries
         public const string HealthCheck = @"
             SELECT 1;
         ";
-        }
     }
+}
