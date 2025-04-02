@@ -10,7 +10,6 @@ using BlueprintService.Data.Queries;
 using BlueprintService.Models;
 using Dapper;
 using Npgsql;
-using OpenTelemetry.Trace;
 
 namespace BlueprintService.Data.Repositories
 {
