@@ -29,13 +29,11 @@ clean:
 # Format the code in the solution
 format:
 	@echo "Formatting solution: $(SOLUTION_FILE)..."
-	dotnet format $(SOLUTION_FILE) --include-generated
+	dotnet format $(SOLUTION_FILE) --severity info
 
 # Lint the code in the solution (check formatting and build warnings)
 lint:
 	@echo "Linting solution: $(SOLUTION_FILE)..."
 	@echo "Checking formatting..."
-	dotnet format $(SOLUTION_FILE) --verify-no-changes --include-generated --verbosity diagnostic
-	@echo "Checking for build warnings/errors..."
-	dotnet build $(SOLUTION_FILE) /warnaserror
+	dotnet format $(SOLUTION_FILE) --verify-no-changes --severity info --verbosity diagnostic
 

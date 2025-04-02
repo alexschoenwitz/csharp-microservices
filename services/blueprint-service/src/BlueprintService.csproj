@@ -1,9 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
-  <!-- Protobuf Apple Silicon compatibility softwareupdate - -install-rosetta -->
-  <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX')) and '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64'">
-    <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
-  </PropertyGroup>
-
   <ItemGroup>
     <Protobuf Include="proto/blueprint.proto" GrpcServices="Server" />
   </ItemGroup>
