@@ -18,7 +18,7 @@ update-sln:
 	@PROJECTS_TO_ADD=""; \
 	for proj in $(PROJECT_FILES); do \
 		proj_bwd="$$(echo "$$proj" | sed 's|/|\\\\|g')"; \
-		if ! grep -qF "$$proj" $(SLN_FILE) && ! grep -q "$$proj_bwd" $(SLN_FILE); then \
+		if ! grep -q "$$proj" $(SLN_FILE) && ! grep -q "$$proj_bwd" $(SLN_FILE); then \
 			PROJECTS_TO_ADD="$$PROJECTS_TO_ADD \"$$proj\""; \
 		fi \
 	done; \
