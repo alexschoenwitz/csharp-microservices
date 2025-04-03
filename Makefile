@@ -1,51 +1,47 @@
-# Variables
-SOLUTION_FILE := BlueprintMonorepo.sln
-PROJECT_DIRS := services
+SLN_FILE := BlueprintMonorepo.sln
+SLN_NAME := $(basename $(SLN_FILE))
 
-# Phony targets (targets that don't represent files)
-.PHONY: all update-sln build clean format lint
+# Find all .csproj files recursively, excluding common build/output/test folders.
+# Adjust the -prune paths if your structure differs significantly.
+# Using := for immediate evaluation on Makefile parse.
+PROJECT_FILES := $(shell find . \
+	-path ./bin -prune -o \
+	-path ./obj -prune -o \
+	-path ./test -prune -o \
+	-path ./tests -prune -o \
+	-path ./node_modules -prune -o \
+	-path ./.git -prune -o \
+	-name '*.csproj' -print | sed 's|^\./||') # Use sed to remove leading ./ for cleaner paths
 
-# Default target
-all: build
-
-# Update the solution file with all projects found in PROJECT_DIRS
-# This finds all .csproj files and adds only those not already in the solution.
+.PHONY: update-sln
 update-sln:
-	@echo "Checking for new projects to add to solution file: $(SOLUTION_FILE)..."
-	@# Get projects currently in the solution, normalize paths, and sort
-	@CURRENT_PROJECTS=$$(dotnet sln $(SOLUTION_FILE) list | grep ".csproj" | sed 's|\\|/|g' | sort || true); \
-	# Find all potential projects, normalize paths, and sort
-	@ALL_PROJECTS=$$(find $(PROJECT_DIRS) -name "*.csproj" -print | sed 's|\\|/|g' | sort); \
-	# Find projects that are in ALL_PROJECTS but not in CURRENT_PROJECTS
-	@PROJECTS_TO_ADD=$$(comm -13 <(echo "$$CURRENT_PROJECTS") <(echo "$$ALL_PROJECTS")); \
-	# Add the missing projects, if any
-	@if [ -n "$$PROJECTS_TO_ADD" ]; then \
-		echo "Adding new projects to solution:"; \
-		echo "$$PROJECTS_TO_ADD" | sed 's/^/  /' ; \
-		echo "$$PROJECTS_TO_ADD" | xargs -I {} dotnet sln $(SOLUTION_FILE) add "{}" ; \
-		echo "Solution file updated."; \
-	else \
-		echo "No new projects found to add."; \
+	@PROJECTS_TO_ADD=""; \
+	for proj in $(PROJECT_FILES); do \
+		proj_bwd="$$(echo "$$proj" | sed 's|/|\\\\|g')"; \
+		if ! grep -qF "$$proj" $(SLN_FILE) && ! grep -q "$$proj_bwd" $(SLN_FILE); then \
+			PROJECTS_TO_ADD="$$PROJECTS_TO_ADD \"$$proj\""; \
+		fi \
+	done; \
+	if [ -n "$$PROJECTS_TO_ADD" ]; then \
+		eval dotnet sln $(SLN_FILE) add $$PROJECTS_TO_ADD; \
 	fi
 
-# Build the solution
-build:
-	@echo "Building solution: $(SOLUTION_FILE)..."
-	dotnet build $(SOLUTION_FILE)
 
-# Clean the solution
+# Target to clean the generated solution file (optional).
+.PHONY: clean
 clean:
-	@echo "Cleaning solution: $(SOLUTION_FILE)..."
-	dotnet clean $(SOLUTION_FILE)
+	@echo "--- Cleaning up ---"
+	rm -f $(SLN_FILE)
+	@echo "Removed $(SLN_FILE)."
 
 # Format the code in the solution
 format:
-	@echo "Formatting solution: $(SOLUTION_FILE)..."
-	dotnet format $(SOLUTION_FILE) --severity info
+	@echo "Formatting solution: $(SLN_FILE)..."
+	dotnet format $(SLN_FILE) --severity info
 
 # Lint the code in the solution (check formatting and build warnings)
 lint:
-	@echo "Linting solution: $(SOLUTION_FILE)..."
+	@echo "Linting solution: $(SLN_FILE)..."
 	@echo "Checking formatting..."
-	dotnet format $(SOLUTION_FILE) --verify-no-changes --severity info --verbosity diagnostic
+	dotnet format $(SLN_FILE) --verify-no-changes --severity info --verbosity diagnostic
 
