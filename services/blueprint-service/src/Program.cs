@@ -24,7 +24,10 @@ namespace BlueprintService
             app.Run();
         }
 
-        private static void ConfigureServices(IServiceCollection services, ConfigurationManager configuration)
+        private static void ConfigureServices(
+            IServiceCollection services,
+            ConfigurationManager configuration
+        )
         {
             // Bind and validate configuration
             var blueprintConfig = new BlueprintConfiguration();
@@ -48,7 +51,8 @@ namespace BlueprintService
             services.AddGrpc();
 
             // Register health checks
-            services.AddHealthChecks()
+            services
+                .AddHealthChecks()
                 .AddCheck<DatabaseHealthCheck>("database_health")
                 .AddCheck<ServiceHealthCheck>("service_health");
 

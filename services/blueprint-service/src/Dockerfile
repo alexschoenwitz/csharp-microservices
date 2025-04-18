@@ -18,10 +18,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-# Create a non-root user and switch to it for security
-RUN adduser --disabled-password --gecos "" appuser
-USER appuser
-
 # Expose the port the app will run on
 EXPOSE 8080
 
