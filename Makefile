@@ -1,4 +1,4 @@
-SLN_FILE := BlueprintMonorepo.sln
+SLN_FILE := BlueprintMonorepo.slnx
 SLN_NAME := $(basename $(SLN_FILE))
 
 # Find all .csproj files recursively, excluding common build/output/test folders.

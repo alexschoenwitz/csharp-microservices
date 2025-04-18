@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <File Path="Directory.Build.props" />
+  <Folder Name="/services/" />
+  <Folder Name="/services/blueprint-service/">
+    <Project Path="services/blueprint-service/src/BlueprintService.csproj" />
+  </Folder>
+</Solution>
